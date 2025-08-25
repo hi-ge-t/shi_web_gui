@@ -3,32 +3,9 @@ import React, { useState, useEffect } from "react";
 import "./CameraView.css";
 import PowerBarOverlay from "../components/PowerBarOverlay/PowerBarOverlay";
 
-const cameraSources = [
-  {
-    url: "/camera_sample/top_vga.jpg",
-    label: "俯瞰"
-  },
-  {
-    url: "/camera_sample/tire_side_in_qvga.jpg",
-    label: "左前"
-  },
-  {
-    url: "/camera_sample/tire_side_in_qvga.jpg",
-    label: "左後"
-  },
-  {
-    url: "/camera_sample/tire_side_in_qvga.jpg",
-    label: "右前"
-  },
-  {
-    url: "/camera_sample/tire_side_in_qvga.jpg",
-    label: "左後"
-  },
-  {
-    url: "https://fakeimg.pl/600x400/0022ff,128/ffffff?text=Camera6",
-    label: "サブ"
-  }
-];
+import { getCameraSources } from "../lib/cameras"; // 相対パスは実ファイル位置に合わせて
+
+const cameraSources = getCameraSources();
 
 const CameraView = () => {
   const [selectedCamera, setSelectedCamera] = useState(0);
