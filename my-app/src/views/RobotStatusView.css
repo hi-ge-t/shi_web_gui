@@ -1,0 +1,100 @@
+/* src/views/RobotStatusView.css */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+/* Robot Status 全体コンテナ */
+.robot-status {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  padding: 0px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+/* ライトモード */
+body.light-theme .robot-status {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid #0099ff;
+  box-shadow: 0 0 15px rgba(0, 153, 255, 0.7);
+}
+
+/* ダークモード */
+body.dark-theme .robot-status {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ff00ff;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+}
+
+/* タイトル */
+.robot-status__title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2rem;
+  transition: text-shadow 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+body.light-theme .robot-status__title {
+  color: #0099ff;
+  text-shadow: 0 0 10px rgba(0, 153, 255, 0.8), 0 0 20px rgba(0, 153, 255, 0.6);
+}
+
+body.dark-theme .robot-status__title {
+  color: #ff00ff;
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.8), 0 0 20px rgba(255, 0, 255, 0.6);
+}
+
+.robot-status__title:hover {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.9);
+}
+
+/* ステータス項目 */
+.robot-status__table {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: 2px;
+  column-gap: 4px;
+  font-size: 0.8rem;
+  font-family: 'Orbitron', sans-serif;
+  line-height: 1.1;
+  align-items: center;
+}
+
+.robot-status__item_label,
+.robot-status__item_value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: normal;
+  font-family: 'Orbitron', sans-serif;
+  line-height: 1;
+}
+
+
+.robot-status__item_label {
+  text-align: left;
+}
+.robot-status__item_value {
+  text-align: right;
+}
+
+body.light-theme .robot-status__item_label {
+  color: #000000;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .robot-status__item_label {
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+
+body.light-theme .robot-status__item_value {
+  color: #000000;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .robot-status__item_value {
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}

@@ -1,0 +1,19 @@
+/* ライトモードとダークモードのスタイル */
+body.light-theme {
+  background-color: #f0f0f0; /* ライトモードの背景色 */
+  color: black;  /* ライトモードの文字色 */
+}
+
+body.dark-theme {
+  background-color: #1c1c1c; /* ダークモードの背景色 */
+  color: white;  /* ダークモードの文字色 */
+}
+
+/* タイトル部分の文字色をテーマに合わせて変更 */
+h2 {
+  color: inherit; /* 親要素の文字色を継承 */
+  background-color: inherit; /* 背景もテーマに合わせる */
+  padding: 10px;
+  text-align: center;
+  font-size: 2rem;
+}

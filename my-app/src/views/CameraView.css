@@ -1,0 +1,82 @@
+/* CameraView.css */
+.camera-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+  padding-left: 20px;
+}
+
+.main-camera {
+  position: relative;
+  width: 99%;
+  margin-bottom: 10px;
+  margin-left: 0;
+  display: flex;
+  justify-content: flex-start; /* ← 左寄せ */
+}
+
+.main-camera-image {
+  width: 100%;
+  max-width: 100%;
+  object-fit: contain; /* or cover */
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+
+.sub-cameras {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.sub-camera-image {
+  width: 150px;
+  height: 100px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.2s;
+  opacity: 0.8;
+  display: block; /* ← これを追加 */
+  position: relative; /* 念のため */
+  z-index: 1;
+}
+
+.sub-camera-image:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+.sub-camera-image.active {
+  border: 2px solid #00feba;
+  box-shadow: 0 0 10px #00feba;
+}
+
+.camera-label {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #00cfff;
+  font-family: 'Orbitron', sans-serif;
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  text-shadow:
+    0 0 4px #00cfff,
+    0 0 8px #00cfff,
+    0 0 12px #00cfff;
+  box-shadow:
+    0 0 4px #00cfff, inset;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.camera-thumbnail-wrapper {
+  position: relative;
+}
+

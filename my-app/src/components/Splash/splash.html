@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Booting...</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+        }
+
+        .splash-container {
+            text-align: center;
+            opacity: 0;
+        }
+
+        .logo {
+            font-size: 40px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #00feba, #5b548a);
+            -webkit-background-clip: text;
+            color: transparent;
+            opacity: 0;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 5px;
+            background: #00feba;
+            margin-top: 20px;
+            box-shadow: 0 0 10px #00feba;
+        }
+
+        .system-text {
+            font-size: 14px;
+            opacity: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+
+        /* デジタル風ラインの演出 */
+        .glow-line {
+            position: absolute;
+            width: 100vw;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00feba, transparent);
+            top: 50%;
+            left: 0;
+            animation: scan 2s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-50vh); }
+            100% { transform: translateY(50vh); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash-container">
+        <div class="logo">ROBOT SYSTEM</div>
+        <div class="loading-bar"></div>
+        <div class="system-text">System Booting...</div>
+    </div>
+
+    <div class="glow-line"></div>
+
+    <script>
+        gsap.to(".splash-container", { opacity: 1, duration: 1 });
+
+        gsap.fromTo(".logo", 
+            { opacity: 0, y: -20 },
+            { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" }
+        );
+
+        gsap.fromTo(".loading-bar",
+            { width: "0%" },
+            { width: "100%", duration: 3, ease: "power2.inOut" }
+        );
+
+        gsap.fromTo(".system-text",
+            { opacity: 0 },
+            { opacity: 1, duration: 1, delay: 2.5 }
+        );
+
+        setTimeout(() => {
+            gsap.to("body", { opacity: 0, duration: 1.5, onComplete: () => window.close() });
+        }, 4000);
+    </script>
+
+</body>
+</html>
