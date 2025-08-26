@@ -6,7 +6,6 @@ import RobotStatusView from "./views/RobotStatusView";                   // 詳�
 import Settings from "./components/Settings/Settings";                   // 開発者ページで流用
 import ThemeToggle from "./components/ThemeToggle/ThemeToggle";
 import RobotStatusProvider from "./providers/RobotStatusProvider";
-import "./styles/global.css";
 
 import LoginPage from "./views/LoginPage";
 import OperatePage from "./views/OperatePage";

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { useModal } from "../providers/ModalProvider";   // 既に導入済みの想定
-import { useNavigate } from "react-router-dom";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
+import { Card } from "../ui/Card";
+import { useModal } from "../providers/ModalProvider";
 
 export default function LoginPage(){
-  const nav = useNavigate();
   const { openModal } = useModal();
-  const [id, setId]   = useState("admin");
-  const [pw, setPw]   = useState("demo");
+  const [id, setId] = useState("admin");
+  const [pw, setPw] = useState("demo");
   const [loading, setLoading] = useState(false);
 
   const submit = async (e) => {
@@ -16,8 +17,8 @@ export default function LoginPage(){
       return;
     }
     setLoading(true);
-    await new Promise(r=>setTimeout(r, 400));  // 疑似認証
-    if(id === "admin" && pw === "demo"){
+    await new Promise(r=>setTimeout(r, 400));
+    if(id==="admin" && pw==="demo"){
       openModal("confirmNavigate", { title:"ログイン成功", message:"操作画面へ移動します。", to:"/operate" });
     }else{
       openModal("error", { title:"認証失敗", message:"ユーザーIDまたはパスワードが正しくありません。" });
@@ -25,34 +26,36 @@ export default function LoginPage(){
     setLoading(false);
   };
 
-  const onForgot = () => {
-    openModal("warning", { title:"パスワードを忘れた", message:"開発中のため未実装です。" });
-  };
-
   return (
-    <div className="login-wrap">
-      <form className="login-card" onSubmit={submit}>
-        <h1 className="login-title">ログイン</h1>
+    <div className="grid min-h-screen place-items-center bg-[#0f1220] text-slate-100 p-[calc(32px*var(--ui-scale))]">
+      <Card className="w-[calc(560px*var(--ui-scale))] p-[calc(28px*var(--ui-scale))]">
+        <h1 className="mb-2 text-[calc(26px*var(--ui-scale))] font-extrabold">ログイン</h1>
 
-        <div>
-          <div className="login-label">ユーザーID</div>
-          <input className="login-input" value={id} onChange={e=>setId(e.target.value)} autoFocus />
-        </div>
+        <form onSubmit={submit} className="grid gap-4">
+          <div>
+            <div className="mb-1 text-[calc(15px*var(--ui-scale))] text-slate-400 font-medium">ユーザーID</div>
+            <Input value={id} onChange={e=>setId(e.target.value)} autoFocus />
+          </div>
 
-        <div>
-          <div className="login-label">パスワード</div>
-          <input className="login-input" type="password" value={pw} onChange={e=>setPw(e.target.value)} />
-        </div>
+          <div>
+            <div className="mb-1 text-[calc(15px*var(--ui-scale))] text-slate-400 font-medium">パスワード</div>
+            <Input type="password" value={pw} onChange={e=>setPw(e.target.value)} />
+          </div>
 
-        <button className="login-btn" type="submit" disabled={loading}>
-          {loading ? "認証中..." : "ログイン"}
-        </button>
+          <Button variant="primary" disabled={loading}>
+            {loading ? "認証中..." : "ログイン"}
+          </Button>
 
-        <div style={{display:"grid", gap:8}}>
-          <button type="button" className="login-sub" onClick={onForgot}>パスワードを忘れた</button>
-          <div className="login-help">ID: <b>admin</b> / PW: <b>demo</b>（デモ用）</div>
-        </div>
-      </form>
+          <div className="grid gap-2">
+            <Button type="button" variant="ghost" onClick={() => openModal("warning", {title:"パスワードを忘れた", message:"開発中のため未実装です。"})}>
+              パスワードを忘れた
+            </Button>
+            <div className="text-center text-[13px] text-slate-400">
+              ID: <b>admin</b> / PW: <b>demo</b>（デモ用）
+            </div>
+          </div>
+        </form>
+      </Card>
     </div>
   );
 }

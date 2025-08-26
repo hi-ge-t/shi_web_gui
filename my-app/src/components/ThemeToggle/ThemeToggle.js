@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "../../styles/global.css"; // ✅ ここで `global.css` を確実に適用する
 
 const ThemeToggle = () => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark-theme");

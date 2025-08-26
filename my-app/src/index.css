@@ -1,13 +1,158 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 1) Base層：テーマ変数＆全体色 */
+@layer base {
+  :root {
+    --ui-scale: clamp(1.0, min(100vw / 1280, 100vh / 800), 1.8);
+
+    /* トークン（初期=ダーク寄り） */
+    --bg:#0f1220; --panel:#15192e; --text:#e6e9f2; --muted:#8b91a7;
+    --brand:#5b8cff; --brand-weak:#7ea0ff; --border:#2a2f45;
+    --shadow:0 10px 24px rgba(0,0,0,.25); --radius:14px;
+
+    --input-bg-dark:#1b2035;
+    --input-bg-light:#f4f6fb;
+    --danger:#ef4444;
+  }
+
+  body.light-theme {
+    --bg:#f6f7fb; --panel:#ffffff; --text:#0f1220; --muted:#5a607a;
+    --brand:#4f71ff; --brand-weak:#7d97ff; --border:#e4e7ee;
+    --shadow:0 10px 24px rgba(18,24,40,.08);
+  }
+
+  body.dark-theme {
+    --bg:#0f1220; --panel:#15192e; --text:#e6e9f2; --muted:#8b91a7;
+    --brand:#5b8cff; --brand-weak:#7ea0ff; --border:#2a2f45;
+    --shadow:0 10px 24px rgba(0,0,0,.25);
+  }
+
+  html, body, #root { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, "Noto Sans JP", "Apple Color Emoji", "Segoe UI Emoji";
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* 2) Components層：プロジェクトのクラスは@applyで統一 */
+@layer components {
+  /* 右上ボタン周り */
+  .top-right-buttons { @apply absolute top-2 right-5 flex gap-2 z-[1002]; }
+  .settings-container { @apply relative z-[1002]; }
+  .settings-icon { @apply text-2xl cursor-pointer z-[1002]; }
+
+  /* テーマトグル（見た目だけTailwind化） */
+  .theme-toggle {
+    @apply font-orbitron text-base px-4 py-2 cursor-pointer border-2 rounded
+           transition-all duration-300 relative z-[1001] select-none;
+  }
+  body.light-theme .theme-toggle { @apply bg-gray-200 text-blue-500 border-blue-500; }
+  body.dark-theme  .theme-toggle { @apply bg-gray-900 text-pink-500 border-pink-500; }
+
+  /* モーダル */
+  .modal-backdrop { @apply fixed inset-0 grid place-items-center z-[9999] bg-black/45; }
+  .modal-card {
+    background: var(--panel); color: var(--text);
+    box-shadow: var(--shadow); border-radius: var(--radius);
+    min-width: 340px; max-width: 90vw; padding: 20px;
+  }
+  .modal-actions { @apply flex gap-2 justify-end mt-4; }
+  .btn { @apply px-3 py-2 rounded-lg border text-gray-100 bg-gray-900/60 border-gray-600; }
+  .btn.primary { @apply bg-blue-500 border-blue-500 text-white; }
+  .btn.danger { @apply bg-red-500 border-red-500 text-white; }
+
+  /* ログイン：レイアウト */
+  .login-wrap {
+    /* ページ単位で倍率を微調整したければ下を開放
+       --ui-scale: 1.6;
+    */
+    @apply grid min-h-screen place-items-center;
+    padding: calc(32px * var(--ui-scale));
+  }
+  .login-card {
+    width: calc(560px * var(--ui-scale));
+    padding: calc(28px * var(--ui-scale));
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: grid; gap: calc(16px * var(--ui-scale));
+  }
+  .login-title {
+    margin: 0 0 calc(8px * var(--ui-scale));
+    font-size: calc(26px * var(--ui-scale));
+    font-weight: 800; letter-spacing: .3px;
+  }
+
+  /* ログイン：フィールド */
+  .field { margin-bottom: calc(12px * var(--ui-scale)); }
+
+  .login-label {
+    @apply font-medium;
+    color: var(--muted);
+    font-size: calc(15px * var(--ui-scale));
+    margin: 0 0 calc(6px * var(--ui-scale));
+    letter-spacing: .1px;
+  }
+
+  .login-input {
+    @apply w-full rounded-xl border outline-none transition;
+    height: calc(54px * var(--ui-scale));
+    font-size: calc(18px * var(--ui-scale));
+    line-height: 1;
+    padding: 0 calc(14px * var(--ui-scale));
+    color: var(--text);
+    background: var(--input-bg-dark);
+    border-color: var(--border);
+  }
+  body.light-theme .login-input { background: var(--input-bg-light); }
+  .login-input::placeholder { color: color-mix(in srgb, var(--muted) 80%, transparent); }
+  .login-input:hover { border-color: color-mix(in srgb, var(--border) 70%, var(--brand) 30%); }
+  .login-input:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 25%, transparent);
+  }
+  .login-input:disabled { @apply opacity-60 cursor-not-allowed; }
+  .login-input.is-error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger) 20%, transparent);
+  }
+  .field-error {
+    color: var(--danger);
+    font-size: calc(13px * var(--ui-scale));
+    margin-top: calc(6px * var(--ui-scale));
+  }
+
+  /* ログイン：ボタン */
+  .login-btn {
+    @apply w-full rounded-xl border cursor-pointer font-semibold text-white transition;
+    height: calc(56px * var(--ui-scale));
+    font-size: calc(18px * var(--ui-scale));
+    border-color: var(--brand);
+    background: linear-gradient(180deg, var(--brand), var(--brand-weak));
+  }
+  .login-btn:hover:not(:disabled) { @apply brightness-105; }
+  .login-btn:disabled { @apply opacity-60 cursor-not-allowed; }
+
+  .login-sub {
+    @apply w-full rounded-xl border text-gray-100 transition cursor-pointer;
+    height: calc(48px * var(--ui-scale));
+    font-size: calc(16px * var(--ui-scale));
+    border-color: var(--border);
+    color: var(--text);
+    background: color-mix(in srgb, var(--panel) 94%, black 6%);
+  }
+  body.light-theme .login-sub {
+    background: color-mix(in srgb, var(--panel) 98%, black 2%);
+  }
+  .login-sub:hover { @apply brightness-105; }
+
+  .login-help { @apply text-center; color: var(--muted); font-size: calc(13px * var(--ui-scale)); }
 }
