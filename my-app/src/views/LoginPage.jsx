@@ -27,35 +27,23 @@ export default function LoginPage(){
   };
 
   return (
-    <div className="grid min-h-screen place-items-center bg-[#0f1220] text-slate-100 p-[calc(32px*var(--ui-scale))]">
-      <Card className="w-[calc(560px*var(--ui-scale))] p-[calc(28px*var(--ui-scale))]">
-        <h1 className="mb-2 text-[calc(26px*var(--ui-scale))] font-extrabold">ログイン</h1>
-
-        <form onSubmit={submit} className="grid gap-4">
-          <div>
-            <div className="mb-1 text-[calc(15px*var(--ui-scale))] text-slate-400 font-medium">ユーザーID</div>
-            <Input value={id} onChange={e=>setId(e.target.value)} autoFocus />
+    <div className="login-page">
+      <div className="login-card">
+        <h1 className="login-title">ログイン画面</h1>
+        <form className="login-form form-horizontal">
+          <div className="field">
+            <label className="login-label">ユーザー名</label>
+            <input type="text" className="login-input" placeholder="your name" />
           </div>
-
-          <div>
-            <div className="mb-1 text-[calc(15px*var(--ui-scale))] text-slate-400 font-medium">パスワード</div>
-            <Input type="password" value={pw} onChange={e=>setPw(e.target.value)} />
+          <div className="field">
+            <label className="login-label">パスワード</label>
+            <input type="password" className="login-input" placeholder="••••••" />
           </div>
-
-          <Button variant="primary" disabled={loading}>
-            {loading ? "認証中..." : "ログイン"}
-          </Button>
-
-          <div className="grid gap-2">
-            <Button type="button" variant="ghost" onClick={() => openModal("warning", {title:"パスワードを忘れた", message:"開発中のため未実装です。"})}>
-              パスワードを忘れた
-            </Button>
-            <div className="text-center text-[13px] text-slate-400">
-              ID: <b>admin</b> / PW: <b>demo</b>（デモ用）
-            </div>
+          <div className="login-actions">
+            <button type="submit" className="login-btn">ログイン</button>
           </div>
         </form>
-      </Card>
+      </div>
     </div>
   );
 }

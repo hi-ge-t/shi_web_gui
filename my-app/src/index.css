@@ -2,27 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 1) Base層：テーマ変数＆全体色 */
+/* ========== Base: デザイントークン/テーマ ========== */
 @layer base {
   :root {
-    --ui-scale: clamp(1.0, min(100vw / 1280, 100vh / 800), 1.8);
+    --ui-scale: clamp(1.0, min(100vw / 1920, 100vh / 1200), 1.6);
 
-    /* トークン（初期=ダーク寄り） */
+    /* semantic tokens (dark default) */
     --bg:#0f1220; --panel:#15192e; --text:#e6e9f2; --muted:#8b91a7;
     --brand:#5b8cff; --brand-weak:#7ea0ff; --border:#2a2f45;
-    --shadow:0 10px 24px rgba(0,0,0,.25); --radius:14px;
+    --radius:14px; --shadow:0 10px 24px rgba(0,0,0,.25);
 
-    --input-bg-dark:#1b2035;
-    --input-bg-light:#f4f6fb;
+    --input-bg-dark:#1b2035; --input-bg-light:#f4f6fb;
     --danger:#ef4444;
+
+    /* 横並びフォーム用のラベル幅（必要に応じて上書き） */
+    --label-w: 160px;
   }
 
+  /* body に .light-theme / .dark-theme を付け替えるだけで切替 */
   body.light-theme {
     --bg:#f6f7fb; --panel:#ffffff; --text:#0f1220; --muted:#5a607a;
     --brand:#4f71ff; --brand-weak:#7d97ff; --border:#e4e7ee;
     --shadow:0 10px 24px rgba(18,24,40,.08);
   }
-
   body.dark-theme {
     --bg:#0f1220; --panel:#15192e; --text:#e6e9f2; --muted:#8b91a7;
     --brand:#5b8cff; --brand-weak:#7ea0ff; --border:#2a2f45;
@@ -37,72 +39,56 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-                 "Helvetica Neue", Arial, "Noto Sans JP", "Apple Color Emoji", "Segoe UI Emoji";
+      "Helvetica Neue", Arial, "Noto Sans JP", "Apple Color Emoji", "Segoe UI Emoji";
+  }
+
+  /* すべてのフォーム要素の素性を軽く整える */
+  input, select, textarea, button {
+    font: inherit;
   }
 }
 
-/* 2) Components層：プロジェクトのクラスは@applyで統一 */
+/* ========== Components: 再利用可能な部品群 ========== */
 @layer components {
-  /* 右上ボタン周り */
-  .top-right-buttons { @apply absolute top-2 right-5 flex gap-2 z-[1002]; }
-  .settings-container { @apply relative z-[1002]; }
-  .settings-icon { @apply text-2xl cursor-pointer z-[1002]; }
+  /* レイアウト補助 */
+  .page-center { @apply grid min-h-screen place-items-center; }
+  .container-pad { padding: calc(32px * var(--ui-scale)); }
 
-  /* テーマトグル（見た目だけTailwind化） */
-  .theme-toggle {
-    @apply font-orbitron text-base px-4 py-2 cursor-pointer border-2 rounded
-           transition-all duration-300 relative z-[1001] select-none;
-  }
-  body.light-theme .theme-toggle { @apply bg-gray-200 text-blue-500 border-blue-500; }
-  body.dark-theme  .theme-toggle { @apply bg-gray-900 text-pink-500 border-pink-500; }
-
-  /* モーダル */
-  .modal-backdrop { @apply fixed inset-0 grid place-items-center z-[9999] bg-black/45; }
-  .modal-card {
-    background: var(--panel); color: var(--text);
-    box-shadow: var(--shadow); border-radius: var(--radius);
-    min-width: 340px; max-width: 90vw; padding: 20px;
-  }
-  .modal-actions { @apply flex gap-2 justify-end mt-4; }
-  .btn { @apply px-3 py-2 rounded-lg border text-gray-100 bg-gray-900/60 border-gray-600; }
-  .btn.primary { @apply bg-blue-500 border-blue-500 text-white; }
-  .btn.danger { @apply bg-red-500 border-red-500 text-white; }
-
-  /* ログイン：レイアウト */
-  .login-wrap {
-    /* ページ単位で倍率を微調整したければ下を開放
-       --ui-scale: 1.6;
-    */
-    @apply grid min-h-screen place-items-center;
-    padding: calc(32px * var(--ui-scale));
-  }
-  .login-card {
-    width: calc(560px * var(--ui-scale));
-    padding: calc(28px * var(--ui-scale));
+  /* カード */
+  .card {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    display: grid; gap: calc(16px * var(--ui-scale));
+    @apply w-full;
   }
-  .login-title {
+  .card-body { padding: calc(28px * var(--ui-scale)); }
+  .card-title {
     margin: 0 0 calc(8px * var(--ui-scale));
     font-size: calc(26px * var(--ui-scale));
     font-weight: 800; letter-spacing: .3px;
   }
 
-  /* ログイン：フィールド */
-  .field { margin-bottom: calc(12px * var(--ui-scale)); }
-
-  .login-label {
-    @apply font-medium;
-    color: var(--muted);
-    font-size: calc(15px * var(--ui-scale));
-    margin: 0 0 calc(6px * var(--ui-scale));
-    letter-spacing: .1px;
+  /* ボタン */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl border font-semibold transition;
+    height: calc(48px * var(--ui-scale));
+    padding: 0 calc(16px * var(--ui-scale));
   }
+  .btn-primary {
+    color:#fff; border-color: var(--brand);
+    background: linear-gradient(180deg, var(--brand), var(--brand-weak));
+  }
+  .btn-primary:hover { @apply brightness-105; }
+  .btn-ghost {
+    color: var(--text); border-color: var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+  body.light-theme .btn-ghost { background: rgba(0,0,0,0.02); }
+  .btn:disabled { @apply opacity-60 cursor-not-allowed; }
 
-  .login-input {
+  /* 入力 */
+  .input, .select, .textarea {
     @apply w-full rounded-xl border outline-none transition;
     height: calc(54px * var(--ui-scale));
     font-size: calc(18px * var(--ui-scale));
@@ -112,47 +98,151 @@
     background: var(--input-bg-dark);
     border-color: var(--border);
   }
-  body.light-theme .login-input { background: var(--input-bg-light); }
-  .login-input::placeholder { color: color-mix(in srgb, var(--muted) 80%, transparent); }
-  .login-input:hover { border-color: color-mix(in srgb, var(--border) 70%, var(--brand) 30%); }
-  .login-input:focus {
+  .textarea { height: auto; padding: calc(12px * var(--ui-scale)); line-height: 1.5; }
+  body.light-theme .input, body.light-theme .select, body.light-theme .textarea {
+    background: var(--input-bg-light);
+  }
+  .input::placeholder, .textarea::placeholder { color: #9aa1b6; }
+  .input:hover, .select:hover, .textarea:hover { border-color: var(--brand-weak); opacity: 0.98; }
+  .input:focus, .select:focus, .textarea:focus {
     border-color: var(--brand);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 25%, transparent);
+    box-shadow: 0 0 0 4px rgba(91,140,255,.25);
   }
-  .login-input:disabled { @apply opacity-60 cursor-not-allowed; }
-  .login-input.is-error {
-    border-color: var(--danger);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--danger) 20%, transparent);
-  }
-  .field-error {
-    color: var(--danger);
-    font-size: calc(13px * var(--ui-scale));
-    margin-top: calc(6px * var(--ui-scale));
+  .is-error {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 4px rgba(239,68,68,.2) !important;
   }
 
-  /* ログイン：ボタン */
-  .login-btn {
-    @apply w-full rounded-xl border cursor-pointer font-semibold text-white transition;
-    height: calc(56px * var(--ui-scale));
-    font-size: calc(18px * var(--ui-scale));
-    border-color: var(--brand);
-    background: linear-gradient(180deg, var(--brand), var(--brand-weak));
-  }
-  .login-btn:hover:not(:disabled) { @apply brightness-105; }
-  .login-btn:disabled { @apply opacity-60 cursor-not-allowed; }
+  /* ラベル / ヘルプ */
+  .label { @apply font-medium; color: var(--muted); font-size: calc(15px * var(--ui-scale)); }
+  .field-help { color: var(--muted); font-size: calc(13px * var(--ui-scale)); }
+  .error-text { color: var(--danger); font-size: calc(13px * var(--ui-scale)); }
 
-  .login-sub {
-    @apply w-full rounded-xl border text-gray-100 transition cursor-pointer;
-    height: calc(48px * var(--ui-scale));
-    font-size: calc(16px * var(--ui-scale));
-    border-color: var(--border);
-    color: var(--text);
-    background: color-mix(in srgb, var(--panel) 94%, black 6%);
+  /* フォーム（横並びが標準。SP では自動で縦積み） */
+  .form { display:grid; gap: calc(16px * var(--ui-scale)); }
+  .field { display:grid; grid-template-columns: var(--label-w) 1fr; align-items:center;
+           column-gap: calc(14px * var(--ui-scale)); }
+  .field .label { margin: 0; }               /* ラベルを左列に収める */
+  .field .control { @apply w-full; }         /* 右列の入力器 */
+  @media (max-width: 640px) {
+    .field { grid-template-columns: 1fr; row-gap: calc(6px * var(--ui-scale)); }
   }
-  body.light-theme .login-sub {
-    background: color-mix(in srgb, var(--panel) 98%, black 2%);
-  }
-  .login-sub:hover { @apply brightness-105; }
+  .form-actions { @apply grid gap-2; }
 
-  .login-help { @apply text-center; color: var(--muted); font-size: calc(13px * var(--ui-scale)); }
+  /* テーマトグル等（任意） */
+  .top-right-buttons { @apply absolute top-2 right-5 flex gap-2 z-[1002]; }
+  .settings-container { @apply relative z-[1002]; }
+  .settings-icon { @apply text-2xl cursor-pointer z-[1002]; }
+  .theme-toggle { @apply font-orbitron text-base px-4 py-2 cursor-pointer border-2 rounded
+                         transition-all duration-300 relative z-[1001] select-none; }
+  body.light-theme .theme-toggle { @apply bg-gray-200 text-blue-500 border-blue-500; }
+  body.dark-theme  .theme-toggle { @apply bg-gray-900 text-pink-500 border-pink-500; }
+
+  /* モーダル（既存の名前を踏襲） */
+  .modal-backdrop { @apply fixed inset-0 grid place-items-center z-[9999] bg-black/45; }
+  .modal-card {
+    background: var(--panel); color: var(--text);
+    box-shadow: var(--shadow); border-radius: var(--radius);
+    min-width: 340px; max-width: 90vw; padding: 20px;
+  }
+  .modal-actions { @apply flex gap-2 justify-end mt-4; }
+  .btn-danger { @apply btn; background:#ef4444; border-color:#ef4444; color:#fff; }
 }
+
+/* ========== Utilities（必要なら小出しで） ========== */
+.muted { color: var(--muted); }
+
+
+
+/* ========== Login Page専用 ========== */
+.login-page {
+  /* 画面中央寄せ + 画面が狭い時の余白 */
+  @apply min-h-screen grid place-items-center;
+  padding: clamp(16px, 4vh, 40px);
+}
+
+/* カードの骨格：タイトル → フォーム → アクション */
+.login-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: min(720px, calc(100vw - 48px));
+  /*width: 800px;*/
+  height: 600px;
+  /* 内側余白はここで一元管理 */
+  padding: 60px 40px; /* w-px h-px */
+
+  display: grid;
+  grid-template-rows: auto 1fr auto;  /* タイトル / フォーム / ボタン */
+  row-gap: 24px;
+}
+
+.login-title {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  padding-bottom: 40px;
+  /* 画面幅に応じて自動縮小 */
+  font-size: clamp(28px, 2.8vw, 80px);
+}
+
+/* --- フォーム全体 --- */
+.login-form {
+  display: grid;
+  gap: 16px;          /* フィールド間の縦間隔 */
+  align-content: start;
+}
+
+/* --- フィールド部品 --- */
+.field {
+  display: grid;
+  grid-template-columns: minmax(140px, var(--label-w, 220px)) 1fr; /* ラベル/入力 */
+  align-items: center;
+  column-gap: 16px;   /* ラベルと入力の間隔 */
+}
+
+/* ラベルは右寄せで入力にかぶらない */
+.login-label {
+  @apply font-medium;
+  color: var(--muted);
+  justify-self: end;        /* ← ここがポイント：ラベルを右寄せ */
+  white-space: nowrap;
+  font-size: 32px;
+  padding-right: 4px;
+}
+
+/* 入力はグリッドの2列目で幅100%に委ねる */
+.login-input {
+  @apply rounded-xl border outline-none transition;
+  width: 100%;              /* ← 固定幅をやめて列幅いっぱいに */
+  height: 44px;
+  font-size: 24px;
+  padding: 0 12px;
+  color: var(--text);
+  background: var(--input-bg-dark);
+  border-color: var(--border);
+}
+body.light-theme .login-input { background: var(--input-bg-light); }
+.login-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 25%, transparent);
+}
+
+/* --- ボタン行：中央配置 & 固定幅 --- */
+.login-actions {
+  display: flex;
+  justify-content: center;  /* ← 中央へ */
+  gap: 12px;
+  margin-top: 40px;          /* タイトル下の余白が広い問題を抑える */
+}
+
+.login-btn {
+  @apply rounded-xl border cursor-pointer font-semibold text-white transition;
+  width: clamp(220px, 50%, 360px); /* ← 画面に応じた固定幅レンジ */
+  height: 48px;
+  font-size: 24px;
+  border-color: var(--brand);
+  background: linear-gradient(180deg, var(--brand), var(--brand-weak));
+}
+.login-btn:hover:not(:disabled) { @apply brightness-105; }
