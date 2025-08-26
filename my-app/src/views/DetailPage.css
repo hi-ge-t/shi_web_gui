@@ -1,0 +1,47 @@
+/* src/views/DetailPage.css */
+
+.detail-page { 
+  min-height: 100vh; 
+  padding: clamp(16px, 3vw, 28px);
+}
+
+/* ヘッダ */
+.detail-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: clamp(12px, 2.5vw, 20px);
+}
+.detail-title { 
+  margin: 0; 
+  font-size: clamp(20px, 2.2vw, 28px); 
+  font-weight: 800; 
+}
+
+/* 3カラム: 280 / 1fr / 320 （可変） */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  gap: clamp(12px, 2vw, 20px);
+}
+
+/* 中央のライブカード群（レスポンシブ） */
+.live-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 12px;
+}
+.live-card {
+  min-height: 160px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--panel) 96%, black 4%);
+  display: grid; place-items: center;
+  font-size: 14px; color: var(--muted);
+}
+
+/* 768px未満: 2カラム → 1カラムへ */
+@media (max-width: 1024px) {
+  .detail-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .live-grid { grid-template-columns: 1fr; }
+}
