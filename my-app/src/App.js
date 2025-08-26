@@ -8,26 +8,13 @@ import ThemeToggle from "./components/ThemeToggle/ThemeToggle";
 import RobotStatusProvider from "./providers/RobotStatusProvider";
 import "./styles/global.css";
 
-// 仮のログインページ（まずは遷移だけ）
-function LoginPage() {
-  return (
-    <div style={{padding:24}}>
-      <h2>ログイン</h2>
-      <p>（仮）ボタンで操作ページへ遷移します。</p>
-      <button onClick={() => (window.location.href = "/operate")}>ログイン</button>
-    </div>
-  );
-}
+import LoginPage from "./views/LoginPage";
+import OperatePage from "./views/OperatePage";
+import DetailPage from "./views/DetailPage";
+import DevPage from "./views/DevPage";
+import { ModalProvider } from "./providers/ModalProvider";
+import ModalRoot from "./components/ModalRoot/ModalRoot";
 
-// 開発者ページ（当面は Settings を丸ごと表示）
-function DevPage() {
-  return (
-    <div style={{padding:24}}>
-      <h2>開発者</h2>
-      <Settings />
-    </div>
-  );
-}
 
 // 簡易ナビ（右上ボタンの位置を再利用）
 function Nav() {
@@ -61,17 +48,25 @@ function Nav() {
 export default function App() {
   return (
     <RobotStatusProvider>
-      <div className="app-container">
-        <Nav />
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/operate" element={<RobotControl />} />
-          <Route path="/details" element={<RobotStatusView />} />
-          <Route path="/dev" element={<DevPage />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </div>
+      <ModalProvider>
+        <div className="app-container">
+          {/* 共通ナビゲーション（右上） */}
+          <Nav />
+
+          {/* ページルーティング */}
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/operate" element={<OperatePage />} />
+            <Route path="/details" element={<DetailPage />} />
+            <Route path="/dev" element={<DevPage />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </div>
+
+        {/* モーダルは全ページで使えるようにルートに配置 */}
+        <ModalRoot />
+      </ModalProvider>
     </RobotStatusProvider>
   );
 }
