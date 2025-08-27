@@ -30,18 +30,28 @@ export default function LoginPage(){
     <div className="login-page">
       <div className="login-card">
         <h1 className="login-title">ログイン画面</h1>
-        <form className="login-form form-horizontal">
+        <form className="login-form form-horizontal" onSubmit={submit}>
+          
           <div className="field">
             <label className="login-label">ユーザー名</label>
-            <input type="text" className="login-input" placeholder="your name" />
+            <Input className="login-input" value={id} onChange={e=>setId(e.target.value)} autoFocus />
           </div>
+
           <div className="field">
             <label className="login-label">パスワード</label>
-            <input type="password" className="login-input" placeholder="••••••" />
+            <Input className="login-input" type="password" value={pw} onChange={e=>setPw(e.target.value)} />
           </div>
+
           <div className="login-actions">
-            <button type="submit" className="login-btn">ログイン</button>
+            <Button className="login-btn" variant="primary" disabled={loading}>
+              {loading ? "認証中..." : "ログイン"}
+            </Button>
           </div>
+          
+          <div className="text-center text-[13px] text-slate-400">
+            ID: <b>admin</b> / PW: <b>demo</b>（デモ用）
+          </div>
+
         </form>
       </div>
     </div>
