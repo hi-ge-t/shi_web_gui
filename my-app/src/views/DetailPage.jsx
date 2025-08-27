@@ -29,7 +29,7 @@ export default function DetailPage() {
 
   return (
     <MockRobotStatusProvider tick>
-      <div className="w-[1920px] h-[1200px] flex flex-col bg-neutral-100 overflow-hidden">
+      <div className="w-full max-w-[1920px] mx-auto min-h-screen flex flex-col bg-neutral-100 overflow-hidden">
 
         {/* ✅ カード配置（既存のboard-gridをそのまま） */}
         <div className="flex-1 overflow-auto p-4">

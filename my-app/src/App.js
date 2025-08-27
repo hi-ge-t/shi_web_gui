@@ -53,7 +53,7 @@ export default function App() {
           <StatusBar />
 
           {/* 共通ナビゲーション（右上） */}
-          <Nav />
+          {/* <Nav /> */}
 
           {/* ページルーティング */}
           <Routes>
