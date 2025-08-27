@@ -16,6 +16,9 @@ export default function InfoCard({
   value = 0,
   onApply,
   onCancel,
+  className,
+  height,
+  style = {},
 }) {
   const clamp = useCallback((n) => Math.min(max, Math.max(min, n)), [min, max]);
 
@@ -100,8 +103,14 @@ export default function InfoCard({
     raw === "-" ||
     Number.isNaN(Number(raw));
 
+  // height は number のとき px 扱いにする
+  const mergedStyle = {
+    ...(height != null ? { height: typeof height === "number" ? `${height}px` : height } : null),
+    ...style,
+  };
+
   return (
-    <section className="card info-card">
+    <section className={`card info-card ${className}`} style={mergedStyle}>
       {/* Header（固定高） */}
       <div className="info-header">
         <div>

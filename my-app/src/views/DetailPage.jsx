@@ -39,6 +39,17 @@ export default function DetailPage() {
               {/* 1列目（20%） */}
               <div className="basis-[calc((100%-1rem*10)/5)] shrink-0 flex flex-col gap-4">
                 <InfoCard
+                  height={20}
+                  title="モータ設定"
+                  subtitle="電流値：右前"
+                  unit="[A]"
+                  min={0} max={30} step={0.1}
+                  value={motorA}
+                  onApply={(v)=>setMotorA(v)}
+                  onCancel={()=>console.log("cancel motorA")}
+                />
+                <InfoCard
+                  height={20}
                   title="モータ設定"
                   subtitle="電流値：右前"
                   unit="A"
@@ -48,6 +59,7 @@ export default function DetailPage() {
                   onCancel={()=>console.log("cancel motorA")}
                 />
                 <InfoCard
+                  height={20}
                   title="モータ設定"
                   subtitle="電流値：右前"
                   unit="A"
@@ -57,6 +69,7 @@ export default function DetailPage() {
                   onCancel={()=>console.log("cancel motorA")}
                 />
                 <InfoCard
+                  height={20}
                   title="モータ設定"
                   subtitle="電流値：右前"
                   unit="A"
@@ -66,15 +79,7 @@ export default function DetailPage() {
                   onCancel={()=>console.log("cancel motorA")}
                 />
                 <InfoCard
-                  title="モータ設定"
-                  subtitle="電流値：右前"
-                  unit="A"
-                  min={0} max={30} step={0.1}
-                  value={motorA}
-                  onApply={(v)=>setMotorA(v)}
-                  onCancel={()=>console.log("cancel motorA")}
-                />
-                <InfoCard
+                  height={20}
                   title="モータ設定"
                   subtitle="電流値：右前"
                   unit="A"
@@ -88,6 +93,7 @@ export default function DetailPage() {
               {/* 2列目（20%） */}
               <div className="basis-[calc((100%-1rem*10)/5)] shrink-0 flex flex-col gap-4">
                 <InfoCard
+                  height={20}
                   title="移動速度"
                   subtitle="上限値"
                   unit="mm/s"
@@ -96,6 +102,7 @@ export default function DetailPage() {
                   onApply={(v)=>setSpeed(v)}
                 />
                 <InfoCard
+                  height={20}
                   title="移動速度"
                   subtitle="上限値"
                   unit="mm/s"
@@ -104,6 +111,7 @@ export default function DetailPage() {
                   onApply={(v)=>setSpeed(v)}
                 />
                 <InfoCard
+                  height={20}
                   title="移動速度"
                   subtitle="上限値"
                   unit="mm/s"
@@ -112,6 +120,7 @@ export default function DetailPage() {
                   onApply={(v)=>setSpeed(v)}
                 />
                 <InfoCard
+                  height={20}
                   title="移動速度"
                   subtitle="上限値"
                   unit="mm/s"
@@ -120,6 +129,7 @@ export default function DetailPage() {
                   onApply={(v)=>setSpeed(v)}
                 />
                 <InfoCard
+                  height={20}
                   title="移動速度"
                   subtitle="上限値"
                   unit="mm/s"
@@ -132,6 +142,7 @@ export default function DetailPage() {
               {/* 3列目（20%） */}
               <div className="basis-[calc((100%-1rem*10)/5)] shrink-0 flex flex-col gap-4">
                 <InfoCard
+                  height={20}
                   title="温度上限"
                   subtitle="制限値(警告)"
                   unit="℃"
@@ -140,6 +151,7 @@ export default function DetailPage() {
                   onApply={(v)=>console.log("save temp limit:", v)}
                 />
                 <InfoCard
+                  height={20}
                   title="温度上限"
                   subtitle="制限値(警告)"
                   unit="℃"
@@ -148,6 +160,7 @@ export default function DetailPage() {
                   onApply={(v)=>console.log("save temp limit:", v)}
                 />
                 <InfoCard
+                  height={20}
                   title="温度上限"
                   subtitle="制限値(警告)"
                   unit="℃"
@@ -156,6 +169,7 @@ export default function DetailPage() {
                   onApply={(v)=>console.log("save temp limit:", v)}
                 />
                 <InfoCard
+                  height={20}
                   title="温度上限"
                   subtitle="制限値(警告)"
                   unit="℃"
@@ -164,6 +178,7 @@ export default function DetailPage() {
                   onApply={(v)=>console.log("save temp limit:", v)}
                 />
                 <InfoCard
+                  height={20}
                   title="温度上限"
                   subtitle="制限値(警告)"
                   unit="℃"
@@ -192,6 +207,7 @@ export default function DetailPage() {
                   {/* 4列目・下段 */}
                   <div className="flex flex-col gap-4">
                     <InfoCard
+                      height={20}
                       title="4列目：下段カード"
                       subtitle="例：カメラ関連のしきい値"
                       unit="ms"
@@ -200,6 +216,7 @@ export default function DetailPage() {
                       onApply={(v)=>console.log("apply col4-bottom", v)}
                     />
                     <InfoCard
+                      height={20}
                       title="4列目：下段カード"
                       subtitle="例：カメラ関連のしきい値"
                       unit="ms"
@@ -208,6 +225,7 @@ export default function DetailPage() {
                       onApply={(v)=>console.log("apply col4-bottom", v)}
                     />
                     <InfoCard
+                      height={20}
                       title="4列目：下段カード"
                       subtitle="例：カメラ関連のしきい値"
                       unit="ms"
@@ -220,6 +238,7 @@ export default function DetailPage() {
                   {/* 5列目・下段 */}
                   <div className="flex flex-col gap-4">
                     <InfoCard
+                      height={20}
                       title="5列目：下段カード"
                       subtitle="例：別カメラ設定"
                       unit="mm"
@@ -228,6 +247,7 @@ export default function DetailPage() {
                       onApply={(v)=>console.log("apply col5-bottom", v)}
                     />
                     <InfoCard
+                      height={20}
                       title="5列目：下段カード"
                       subtitle="例：別カメラ設定"
                       unit="mm"
@@ -236,6 +256,7 @@ export default function DetailPage() {
                       onApply={(v)=>console.log("apply col5-bottom", v)}
                     />
                     <InfoCard
+                      height={20}
                       title="5列目：下段カード"
                       subtitle="例：別カメラ設定"
                       unit="mm"

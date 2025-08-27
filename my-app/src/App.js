@@ -15,26 +15,28 @@ import ModalRoot from "./components/ModalRoot/ModalRoot";
 
 import { MockRobotStatusProvider } from "./contexts/RobotStatusContext";
 
-// 簡易ナビ（右上ボタンの位置を再利用）
+// 簡易ナビ（左下固定）
 function Nav() {
   const { pathname } = useLocation();
-  const A = ({to, children}) => (
+  const A = ({ to, children }) => (
     <Link
       to={to}
       style={{
-        padding:"8px 12px",
-        borderRadius:8,
-        textDecoration:"none",
-        color: pathname===to ? "#fff" : "#e6e9f2",
-        background: pathname===to ? "#5b8cff" : "transparent",
-        marginRight:8
+        padding: "8px 12px",
+        borderRadius: 8,
+        textDecoration: "none",
+        color: pathname === to ? "#fff" : "#e6e9f2",
+        background: pathname === to ? "#5b8cff" : "transparent",
+        marginRight: 8,
+        whiteSpace: "nowrap",
       }}
     >
       {children}
     </Link>
   );
+
   return (
-    <div className="top-right-buttons" style={{gap:8}}>
+    <div className="debug-nav-bl">
       <A to="/login">ログイン</A>
       <A to="/operate">操作</A>
       <A to="/details">詳細</A>
@@ -44,6 +46,7 @@ function Nav() {
   );
 }
 
+
 export default function App() {
   return (
     <MockRobotStatusProvider tick>
@@ -52,8 +55,8 @@ export default function App() {
           {/* 画面上部にバーを1回だけ表示 */}
           <StatusBar />
 
-          {/* 共通ナビゲーション（右上） */}
-          {/* <Nav /> */}
+          {/* デバッグ用共通ナビゲーション（右上） */}
+          <Nav />
 
           {/* ページルーティング */}
           <Routes>
