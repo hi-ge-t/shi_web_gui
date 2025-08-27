@@ -1,141 +1,173 @@
-import React from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 
 /**
- * 汎用の情報/設定カード
- *
- * props:
- * - title        : 主タイトル（例: "モータ設定"）
- * - subtitle     : 副タイトル（例: "右前 電流値"）
- * - value        : 現在/設定値（制御用の状態を親で持つ）
- * - onChange     : (newVal) => void
- * - unit         : 単位（例: "A", "mm/s", "℃", "fps"）
- * - type         : "number" | "slider" | "radio" | "text"
- * - min,max,step : 数値/スライダー用
- * - options      : ラジオ用 [{label, value}]
- * - disabled     : true/false
- * - hint         : 補足テキスト
- * - onSave       : クリック時に呼ばれる。未指定なら非表示
+ * 見た目はそのまま（.card .info-card などのクラスを維持）
+ * - 変更検知で保存ボタンを活性化
+ * - Enter=保存 / Esc=キャンセル
+ * - blur/保存で min/max にクランプ
  */
 export default function InfoCard({
   title,
   subtitle,
-  value,
-  onChange,
-  unit,
-  type = "number",
-  min,
-  max,
-  step,
-  options = [],
-  disabled = false,
-  hint,
-  onSave,
+  unit = "",
+  min = 0,
+  max = 100,
+  step = 1,
+  value = 0,
+  onApply,
+  onCancel,
 }) {
-  // 入力UIの切り替え
-  const renderInput = () => {
-    const commonProps = {
-      disabled,
-      className: "input",
-    };
+  const clamp = useCallback((n) => Math.min(max, Math.max(min, n)), [min, max]);
 
-    switch (type) {
-      case "text":
-        return (
-          <input
-            {...commonProps}
-            type="text"
-            value={value ?? ""}
-            onChange={(e) => onChange?.(e.target.value)}
-            placeholder="入力してください"
-          />
-        );
-      case "radio":
-        return (
-          <div className="grid gap-2">
-            {options.map((opt) => (
-              <label key={opt.value} className="inline-flex items-center gap-2">
-                <input
-                  type="radio"
-                  className="accent-blue-500 h-5 w-5"
-                  disabled={disabled}
-                  checked={value === opt.value}
-                  onChange={() => onChange?.(opt.value)}
-                />
-                <span>{opt.label}</span>
-              </label>
-            ))}
-          </div>
-        );
-      case "slider":
-        return (
-          <div className="grid gap-2">
-            <input
-              type="range"
-              className="w-full"
-              min={min ?? 0}
-              max={max ?? 100}
-              step={step ?? 1}
-              value={Number(value ?? 0)}
-              disabled={disabled}
-              onChange={(e) => onChange?.(Number(e.target.value))}
-            />
-            <div className="text-right field-help">
-              {value}{unit ? ` ${unit}` : ""}
-            </div>
-          </div>
-        );
-      case "number":
-      default:
-        return (
-          <div className="flex items-center gap-2">
-            <input
-              {...commonProps}
-              type="number"
-              inputMode="decimal"
-              min={min}
-              max={max}
-              step={step}
-              value={value ?? ""}
-              onChange={(e) => onChange?.(e.target.value === "" ? "" : Number(e.target.value))}
-              placeholder="0"
-              style={{ width: "100%" }}
-            />
-            {unit && <div className="muted">{unit}</div>}
-          </div>
-        );
+  // 入力用ドラフト値（数値）。入力途中の空文字は許容したいので別に raw 文字列も持つ
+  const [draft, setDraft] = useState(() => clamp(Number(value)));
+  const [raw, setRaw] = useState(String(value));
+  const [dirty, setDirty] = useState(false);
+
+  // 外から value が変わったら同期
+  useEffect(() => {
+    const v = clamp(Number(value));
+    setDraft(v);
+    setRaw(String(v));
+    setDirty(false);
+  }, [value, clamp]);
+
+  // 小数桁の推定（step から推定）
+  const decimals = useMemo(() => {
+    const s = String(step);
+    return s.includes(".") ? (s.split(".")[1]?.length || 0) : 0;
+  }, [step]);
+
+  // 表示用文字列（NaN は空文字でごまかす）
+  const display = useMemo(() => {
+    if (raw === "" || raw === "-" || Number.isNaN(Number(raw))) return "";
+    return `${Number(draft).toFixed(decimals)}${unit}`;
+  }, [raw, draft, unit, decimals]);
+
+  // number input: 入力途中は自由、確定は blur/保存時
+  const handleNumberChange = (e) => {
+    const text = e.target.value;
+    setRaw(text);
+    setDirty(true);
+
+    // 入力途中（空/ハイフン/小数点だけ等）は draft を即更新しない
+    const n = Number(text);
+    if (!Number.isNaN(n)) {
+      setDraft(n);
     }
   };
 
+  const handleNumberBlur = () => {
+    // blur で範囲に丸めて表示整形
+    const n = Number(raw);
+    const next = Number.isNaN(n) ? clamp(Number(value)) : clamp(n);
+    setDraft(next);
+    setRaw(String(next));
+  };
+
+  const handleRangeChange = (e) => {
+    const n = clamp(Number(e.target.value));
+    setDraft(n);
+    setRaw(String(n));
+    setDirty(true);
+  };
+
+  const apply = () => {
+    const n = clamp(Number(raw));
+    if (Number.isNaN(n)) return; // 無効
+    setDraft(n);
+    setRaw(String(n));
+    if (onApply) onApply(n);
+    setDirty(false);
+  };
+
+  const cancel = () => {
+    const v = clamp(Number(value));
+    setDraft(v);
+    setRaw(String(v));
+    setDirty(false);
+    onCancel?.();
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter") { e.preventDefault(); apply(); }
+    if (e.key === "Escape") { e.preventDefault(); cancel(); }
+  };
+
+  const saveDisabled =
+    !dirty ||
+    raw === "" ||
+    raw === "-" ||
+    Number.isNaN(Number(raw));
+
   return (
-    <section className="card h-full">
-      <div className="card-body grid gap-4 h-full">
-        {/* ヘッダー行 */}
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="card-title">{title}</div>
-            {subtitle && <div className="muted">{subtitle}</div>}
-          </div>
-          {/* 現在値（radio/slider以外は右肩に軽く見せる） */}
-          {type !== "slider" && type !== "radio" && value !== undefined && (
-            <div className="text-sm muted whitespace-nowrap">
-              現在: <b className="text-white/90">{value}{unit ? ` ${unit}` : ""}</b>
-            </div>
+    <section className="card info-card">
+      {/* Header（固定高） */}
+      <div className="info-header">
+        <div>
+          <div className="info-title">{title}</div>
+          {subtitle && <div className="info-sub">{subtitle}</div>}
+        </div>
+        <div className="info-header-tools">{/* 右上バッジ/スイッチ等（任意） */}</div>
+      </div>
+
+      {/* Body */}
+      <div className="info-body">
+        {/* 数値入力（上段） */}
+        <div className="row">
+          <input
+            className="info-input"
+            value={raw}
+            onChange={handleNumberChange}
+            onBlur={handleNumberBlur}
+            onKeyDown={onKeyDown}
+            type="number"
+            step={step}
+            min={min}
+            max={max}
+            aria-label={title}
+          />
+          <span className="muted unit">{unit}</span>
+          <div className="muted value">{display}</div>
+        </div>
+
+        {/* スライダー（下段） */}
+        <input
+          className="info-range"
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={Number.isNaN(draft) ? min : clamp(draft)}
+          onChange={handleRangeChange}
+          aria-label={`${title} range`}
+        />
+      </div>
+
+      {/* Footer（ボタンがあるときだけ表示） */}
+      {(onApply || onCancel) && (
+        <div className="info-footer">
+          {onCancel && (
+            <button
+              className="btn-ghost btn-sm rounded-xl border"
+              onClick={cancel}
+              type="button"
+            >
+              キャンセル
+            </button>
+          )}
+          {onApply && (
+            <button
+              className={`btn btn-primary btn-sm rounded-xl border ${saveDisabled ? "opacity-50 pointer-events-none" : ""}`}
+              onClick={apply}
+              type="button"
+              disabled={saveDisabled}
+            >
+              保存
+            </button>
           )}
         </div>
-
-        {/* 入力領域 */}
-        <div className="grid gap-3">
-          {renderInput()}
-          {hint && <div className="field-help">{hint}</div>}
-        </div>
-
-        {/* アクション（右下寄せ） */}
-        {onSave && (
-          <div className="mt-auto flex justify-end">
-            <button className="btn btn-primary" onClick={onSave}>保存</button>
-          </div>
-        )}
-      </div>
+      )}
     </section>
   );
 }

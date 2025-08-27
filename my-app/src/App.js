@@ -2,11 +2,10 @@
 import React from "react";
 import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import RobotControl from "./components/RobotDashboard/RobotDashboard";   // 操作ページ用
-import RobotStatusView from "./views/RobotStatusView";                   // 詳細ページ用
 import Settings from "./components/Settings/Settings";                   // 開発者ページで流用
 import ThemeToggle from "./components/ThemeToggle/ThemeToggle";
-import RobotStatusProvider from "./providers/RobotStatusProvider";
 
+import StatusBar from "./components/StatusBar";
 import LoginPage from "./views/LoginPage";
 import OperatePage from "./views/OperatePage";
 import DetailPage from "./views/DetailPage";
@@ -14,6 +13,7 @@ import DevPage from "./views/DevPage";
 import { ModalProvider } from "./providers/ModalProvider";
 import ModalRoot from "./components/ModalRoot/ModalRoot";
 
+import { MockRobotStatusProvider } from "./contexts/RobotStatusContext";
 
 // 簡易ナビ（右上ボタンの位置を再利用）
 function Nav() {
@@ -46,9 +46,12 @@ function Nav() {
 
 export default function App() {
   return (
-    <RobotStatusProvider>
+    <MockRobotStatusProvider tick>
       <ModalProvider>
         <div className="app-container">
+          {/* 画面上部にバーを1回だけ表示 */}
+          <StatusBar />
+
           {/* 共通ナビゲーション（右上） */}
           <Nav />
 
@@ -66,6 +69,6 @@ export default function App() {
         {/* モーダルは全ページで使えるようにルートに配置 */}
         <ModalRoot />
       </ModalProvider>
-    </RobotStatusProvider>
+    </MockRobotStatusProvider>
   );
 }

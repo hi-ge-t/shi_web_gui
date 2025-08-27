@@ -203,6 +203,108 @@
     -webkit-appearance: none; appearance: none; width:18px; height:18px; border-radius:999px;
     background: var(--brand); border:2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.25);
   }
+
+
+  
+/* ===== Detail page grid ===== */
+.board-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:16px;
+  padding:16px;
+}
+
+/* ===== Card base ===== */
+.info-card{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  border-radius:16px;
+  background:var(--card-bg, #fff);
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+  border:1px solid var(--border, #e5e7eb);
+  min-height:180px; /* 必要なら調整 */
+}
+
+/* Header：固定高で揃える */
+.info-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:56px; /* h-14 */
+  padding:0 20px;
+  border-bottom:1px solid color-mix(in srgb, var(--border) 100%, transparent);
+}
+.info-header-tools{ height:24px; display:flex; align-items:center; gap:8px; }
+
+.info-title{ font-size:22px; font-weight:700; line-height:1; }
+.info-sub{ color: var(--muted); font-size:12px; margin-top:6px; }
+
+/* Body：左タイトル列を排除し、UIの水平ズレを無くす */
+.info-body{
+  padding:16px 20px;
+  display:grid;
+  row-gap:12px;
+}
+
+/* 入力1行のレイアウト（数値入力行） */
+.row{
+  display:grid;
+  grid-template-columns: 1fr 56px 80px; /* 入力 / 単位 / 表示値 */
+  align-items:center;
+  column-gap:12px;
+}
+
+/* 入力部の統一（高さ/フォント） */
+.info-input{
+  height:40px; font-size:16px;
+  padding:0 12px; border-radius:12px;
+  border:1px solid var(--border); outline:none;
+  background: var(--input-bg-dark);
+  color: var(--text);
+}
+body.light-theme .info-input{ background: var(--input-bg-light); }
+.info-input:focus{
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 25%, transparent);
+}
+.unit{ text-align:center; }
+.value{ text-align:right; }
+
+/* スライダー */
+.info-range{
+  width:100%; height:10px; border-radius:9999px;
+  background: color-mix(in srgb, var(--brand) 35%, #6b7280 65%);
+  appearance:none;
+}
+.info-range::-webkit-slider-thumb{
+  appearance:none; width:20px; height:20px; border-radius:9999px;
+  background:#000; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4);
+  cursor:pointer;
+}
+.info-range::-moz-range-thumb{
+  width:20px; height:20px; border-radius:9999px;
+  background:#000; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4);
+  cursor:pointer;
+}
+
+/* Footer：固定高で右寄せ */
+.info-footer{
+  height:48px; /* h-12 */
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  padding:0 20px 12px 20px; /* 視覚バランス用に下を少し詰める */
+  margin-top:auto; /* 下寄せ */
+  border-top:1px solid color-mix(in srgb, var(--border) 100%, transparent);
+}
+
+/* ボタン共通 */
+.card-actions{ margin-top:0; } /* 既存のmt-4を無効化して段差をなくす */
+.btn-sm{ height:36px; font-size:14px; padding:0 14px; }
+
+
 }
 
 /* ========== Utilities（必要なら小出しで） ========== */
@@ -302,3 +404,40 @@ body.light-theme .login-input { background: var(--input-bg-light); }
   background: linear-gradient(180deg, var(--brand), var(--brand-weak));
 }
 .login-btn:hover:not(:disabled) { @apply brightness-105; }
+
+
+
+/* ===== PortalSelect theme ===== */
+.portal-select-menu{
+  background: var(--card-bg, #fff);
+  color: var(--text, #111827);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.10), 0 4px 10px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+.portal-select-list{
+  max-height: 16rem;       /* 256px */
+  overflow: auto;
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+}
+.portal-select-item{
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.2;
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+}
+.portal-select-item:hover{
+  background: color-mix(in srgb, var(--brand, #4f46e5) 12%, transparent);
+}
+.portal-select-item.is-selected{
+  background: color-mix(in srgb, var(--brand, #4f46e5) 18%, transparent);
+  font-weight: 600;
+}
