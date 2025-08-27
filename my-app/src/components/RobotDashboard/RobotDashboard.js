@@ -12,17 +12,11 @@ export default function RobotDashboard() {
       // 2カラム：左=カメラ(伸縮), 右=ステータス固定幅
       className="
         h-full min-h-0
-        grid grid-cols-[minmax(0,1fr)_800px] gap-3
+        grid grid-cols-[minmax(0,1fr)_400px] gap-3
       "
     >
       {/* 左：カメラ領域（高さ/幅ともに親いっぱい） */}
-      <section
-        className="
-          min-w-0 min-h-0 h-full overflow-hidden
-          rounded-2xl bg-black
-          p-0
-        "
-      >
+      <section className="min-w-0 min-h-0 h-full overflow-hidden">
         <CameraView />
       </section>
 
