@@ -9,7 +9,6 @@ export default function DetailPage() {
   // モック状態（本番はContext/Providerへ）
   const [motorCurrentRF, setMotorCurrentRF] = useState(10.1);
   const [motorLimit, setMotorLimit] = useState(30);
-  const [wirelessPref, setWirelessPref] = useState("primary");
   const [frameRate, setFrameRate] = useState(30);
 
   const [endpoints, setEndpoints] = useState([
