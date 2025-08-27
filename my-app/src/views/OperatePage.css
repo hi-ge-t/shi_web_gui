@@ -1,0 +1,16 @@
+/* ===== Shell(ページ)側にヘッダーがある前提の“埋め込みモード” ===== */
+.dashboard--embedded {
+  /* ルート自体の余白・高さ補正を無効化 */
+  margin-top: 0 !important;
+  height: 100% !important;
+}
+
+.dashboard--embedded .status-panel {
+  /* 右カラムの不要な上余白も消す */
+  margin-top: 0 !important;
+}
+
+/* 旧ダッシュボード内ヘッダーは非表示（もしDOMに残っていた場合） */
+.dashboard--embedded .dashboard-header {
+  display: none !important;
+}

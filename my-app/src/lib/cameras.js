@@ -30,6 +30,6 @@ export function getCameraSources() {
     { url: "/camera_sample/tire_side_in_qvga.jpg", label: "左後" },
     { url: "/camera_sample/tire_side_in_qvga.jpg", label: "右前" },
     { url: "/camera_sample/tire_side_in_qvga.jpg", label: "右後" },
-    { url: "https://fakeimg.pl/600x400/0022ff,128/ffffff?text=Camera6", label: "サブ" }
+    { url: "/camera_sample/top_vga.jpg", label: "サブ" }
   ];
 }

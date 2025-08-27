@@ -1,82 +1,51 @@
-/* CameraView.css */
-.camera-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin: 0 auto;
-  padding-left: 20px;
+/* 変数 */
+.cv-root{
+  display:flex; flex-direction:column; gap:12px;
+  height:100%; min-height:0;
+  --gap: 12px;
+  --thumb-h: 180px;                              /* 小タイル1枚の高さ */
+  --main-h: calc(var(--thumb-h) * 2 + var(--gap));/* ⇒ メイン/サブの高さ */
 }
 
-.main-camera {
-  position: relative;
-  width: 99%;
-  margin-bottom: 10px;
-  margin-left: 0;
-  display: flex;
-  justify-content: flex-start; /* ← 左寄せ */
+/* ★ 3カラム×2行の単一グリッド。中央幅は少し広め */
+.cv-grid{
+  display:grid;
+  grid-template-columns: 1fr 1.25fr 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--gap);
+  min-height:0;
 }
 
-.main-camera-image {
-  width: 100%;
-  max-width: 100%;
-  object-fit: contain; /* or cover */
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  display: block;
-  position: relative;
-  z-index: 1;
+/* 1行目 */
+.cv-left  { grid-column: 1; grid-row: 1; }
+.cv-main  { grid-column: 2; grid-row: 1; }
+.cv-right { grid-column: 3; grid-row: 1; }
+
+/* 2行目：中央だけ使用 → メインと同一カラム＝同一幅 */
+.cv-sub   { grid-column: 2; grid-row: 2; }
+
+/* スタック2段 */
+.cv-stack{ display:grid; grid-template-rows: 1fr 1fr; gap: var(--gap); min-height:0; }
+
+/* タイル共通 */
+.cv-tile{ position:relative; border-radius:12px; overflow:hidden; background:#000; min-height:0; }
+.cv-img{ width:100%; height:100%; object-fit:cover; display:block; user-select:none; }
+.cv-label{ position:absolute; left:8px; top:8px; padding:2px 8px; font-size:12px; color:#fff; background:#0008; border-radius:8px; pointer-events:none; }
+.cv-label--main{ font-weight:700; }
+.cv-overlay{ position:absolute; left:6px; bottom:6px; pointer-events:none; }
+.cv-active{ outline:2px solid #5b8cff; }
+
+/* ★ 高さの統一：メイン＝サブ＝スタック2枚分 */
+.cv-stackcell { height: var(--thumb-h); }
+.cv-maininner { height: var(--main-h); }
+.cv-bottomcell{ height: var(--main-h); }
+
+/* レスポンシブ（必要なら縮小は変数だけ変更） */
+@media (max-width: 1400px){
+  .cv-root{ --thumb-h: 160px; }
 }
-
-
-.sub-cameras {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
+@media (max-width: 1200px){
+  .cv-grid{ grid-template-columns: 1fr; }
+  .cv-root{ --thumb-h: 140px; }
+  .cv-left, .cv-main, .cv-right, .cv-sub { grid-column: 1; }
 }
-
-.sub-camera-image {
-  width: 150px;
-  height: 100px;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: transform 0.2s;
-  opacity: 0.8;
-  display: block; /* ← これを追加 */
-  position: relative; /* 念のため */
-  z-index: 1;
-}
-
-.sub-camera-image:hover {
-  transform: scale(1.05);
-  opacity: 1;
-}
-
-.sub-camera-image.active {
-  border: 2px solid #00feba;
-  box-shadow: 0 0 10px #00feba;
-}
-
-.camera-label {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #00cfff;
-  font-family: 'Orbitron', sans-serif;
-  padding: 5px 10px;
-  font-size: 0.75rem;
-  border-radius: 6px;
-  text-shadow:
-    0 0 4px #00cfff,
-    0 0 8px #00cfff,
-    0 0 12px #00cfff;
-  box-shadow:
-    0 0 4px #00cfff, inset;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.camera-thumbnail-wrapper {
-  position: relative;
-}
-

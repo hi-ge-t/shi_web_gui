@@ -53,7 +53,7 @@ export default function App() {
       <ModalProvider>
         <div className="app-container">
           {/* 画面上部にバーを1回だけ表示 */}
-          <StatusBar />
+          <StatusBar size={100} />
 
           {/* デバッグ用共通ナビゲーション（右上） */}
           <Nav />
