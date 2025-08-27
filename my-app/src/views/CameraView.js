@@ -1,115 +1,120 @@
 import React, { useState, useEffect } from "react";
-import "./CameraView.css";
 import PowerBarOverlay from "../components/PowerBarOverlay/PowerBarOverlay";
 import { getCameraSources } from "../lib/cameras";
 
 const cameraSources = getCameraSources();
 
-/**
- * 想定スロット:
- *  - main:          選択中のカメラ (selectedCamera)
- *  - leftTop:       sources[1]
- *  - leftBottom:    sources[2]
- *  - rightTop:      sources[3]
- *  - rightBottom:   sources[4]
- *  - bottomMain:    sources[5]
- * ※足りない場合は undefined を受け取り "no signal" 表示
- */
-const CameraView = () => {
-  const [selectedCamera, setSelectedCamera] = useState(0);
-
-  // 2本バー(センサ/モータ)用ダミー：左2 + 右2 + 下1 = 5スロットぶん
-  const SLOT_COUNT = 5;
-  const [powerData, setPowerData] = useState(
-    Array(SLOT_COUNT).fill([0.5, 0.5])
+const CamTile = ({ src, label, active, onClick, overlay }) => {
+  const hasSrc = !!src?.url;
+  return (
+    <div
+      onClick={onClick}
+      className={`relative w-full h-full rounded-xl overflow-hidden bg-black cursor-pointer
+                  ${active ? "ring-2 ring-sky-500" : "ring-0"}`}
+    >
+      {hasSrc ? (
+        <img src={src.url} alt={label} draggable={false} className="w-full h-full object-cover select-none" />
+      ) : (
+        <div className="absolute inset-0 grid place-items-center text-white/70 text-xs bg-neutral-900">no signal</div>
+      )}
+      {label && (
+        <div className="absolute left-2 top-2 px-2 py-0.5 rounded bg-black/60 text-white text-[11px]">{label}</div>
+      )}
+      <div className="absolute left-1.5 bottom-1.5 pointer-events-none">{overlay}</div>
+    </div>
   );
+};
+
+export default function CameraView() {
+  const [selectedCamera, setSelectedCamera] = useState(0);
+  const SLOT_COUNT = 5;
+  const [powerData, setPowerData] = useState(Array(SLOT_COUNT).fill([0.5, 0.5]));
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      // 閉包の古いstateを避けるため関数更新
-      setPowerData(prev =>
-        prev.map(() => [Math.random(), Math.random()])
-      );
+    const id = setInterval(() => {
+      setPowerData((prev) => prev.map(() => [Math.random(), Math.random()]));
     }, 1000);
-    return () => clearInterval(interval);
+    return () => clearInterval(id);
   }, []);
 
   const slotDefs = [
-    { key: "leftTop",    src: cameraSources[1], powerIndex: 0, clickIndex: 1, labelFallback: "左 上" },
-    { key: "leftBottom", src: cameraSources[2], powerIndex: 1, clickIndex: 2, labelFallback: "左 下" },
-    { key: "rightTop",   src: cameraSources[3], powerIndex: 2, clickIndex: 3, labelFallback: "右 上" },
-    { key: "rightBottom",src: cameraSources[4], powerIndex: 3, clickIndex: 4, labelFallback: "右 下" },
+    { src: cameraSources[1], labelFallback: "左 上"  }, // power idx 0
+    { src: cameraSources[2], labelFallback: "左 下"  }, // power idx 1
+    { src: cameraSources[3], labelFallback: "右 上"  }, // power idx 2
+    { src: cameraSources[4], labelFallback: "右 下"  }, // power idx 3
   ];
-  const bottomDef = {
-    key: "bottomMain", src: cameraSources[5], powerIndex: 4, clickIndex: 5, labelFallback: "ボトム"
-  };
-
-  const renderTile = ({ src, label, onClick, active, powerIndex, className }) => {
-    const [sensorPower, motorPower] = powerData[powerIndex] || [0, 0];
-    const hasSrc = !!src?.url;
-
-    return (
-      <div className={`cv-tile ${className || ""} ${active ? "cv-active" : ""}`} onClick={onClick}>
-        {hasSrc ? (
-          <img src={src.url} alt={label} className="cv-img" draggable={false} />
-        ) : (
-          <div className="cv-nosignal">no signal</div>
-        )}
-        <div className="cv-label">{label}</div>
-        <div className="cv-overlay">
-          <PowerBarOverlay sensorPower={sensorPower} motorPower={motorPower} />
-        </div>
-      </div>
-    );
-  };
+  const bottomDef = { src: cameraSources[5], labelFallback: "ボトム" }; // power idx 4
 
   return (
-    <div className="cv-root">
-      <div className="cv-grid">
-        {/* 1行目：左/メイン/右 */}
-        <div className="cv-stack cv-left">
-          {renderTile({ /* 左上 */  src: slotDefs[0].src, label: slotDefs[0].src?.label || slotDefs[0].labelFallback,
-            onClick: () => setSelectedCamera(slotDefs[0].clickIndex), active: selectedCamera === slotDefs[0].clickIndex,
-            powerIndex: slotDefs[0].powerIndex, className: "cv-stackcell" })}
-          {renderTile({ /* 左下 */  src: slotDefs[1].src, label: slotDefs[1].src?.label || slotDefs[1].labelFallback,
-            onClick: () => setSelectedCamera(slotDefs[1].clickIndex), active: selectedCamera === slotDefs[1].clickIndex,
-            powerIndex: slotDefs[1].powerIndex, className: "cv-stackcell" })}
+    // 親から高さを受け取ってフルで使う
+    <div className="h-full min-h-0 flex flex-col gap-3">
+      {/* 3カラム×2行。行は 1fr / 1fr で等分 → メインとサブが同じ高さになる */}
+      <div className="grid h-full min-h-0 grid-cols-[1fr_1.25fr_1fr] grid-rows-[1fr_1fr] gap-3">
+        {/* 1行目：左スタック */}
+        <div className="grid grid-rows-2 gap-3 h-full">
+          {[0, 1].map((i) => (
+            <CamTile
+              key={`lt-${i}`}
+              src={slotDefs[i].src}
+              label={slotDefs[i].src?.label || slotDefs[i].labelFallback}
+              active={selectedCamera === i + 1}
+              onClick={() => setSelectedCamera(i + 1)}
+              overlay={
+                <PowerBarOverlay
+                  sensorPower={powerData[i]?.[0] ?? 0}
+                  motorPower={powerData[i]?.[1] ?? 0}
+                />
+              }
+            />
+          ))}
         </div>
 
-        <div className="cv-main">
-          <div className="cv-tile cv-maininner cv-active">
-            <img src={cameraSources[selectedCamera]?.url}
-                alt={cameraSources[selectedCamera]?.label || `Camera ${selectedCamera + 1}`}
-                className="cv-img" draggable={false} />
-            <div className="cv-label cv-label--main">
-              {cameraSources[selectedCamera]?.label || `Camera ${selectedCamera + 1}`}
-            </div>
-          </div>
+        {/* 1行目：中央メイン（行の高さを100%使用） */}
+        <div className="h-full">
+          <CamTile
+            src={cameraSources[selectedCamera]}
+            label={cameraSources[selectedCamera]?.label || `Camera ${selectedCamera + 1}`}
+            active
+            onClick={() => {}}
+            overlay={null}
+          />
         </div>
 
-        <div className="cv-stack cv-right">
-          {renderTile({ /* 右上 */  src: slotDefs[2].src, label: slotDefs[2].src?.label || slotDefs[2].labelFallback,
-            onClick: () => setSelectedCamera(slotDefs[2].clickIndex), active: selectedCamera === slotDefs[2].clickIndex,
-            powerIndex: slotDefs[2].powerIndex, className: "cv-stackcell" })}
-          {renderTile({ /* 右下 */  src: slotDefs[3].src, label: slotDefs[3].src?.label || slotDefs[3].labelFallback,
-            onClick: () => setSelectedCamera(slotDefs[3].clickIndex), active: selectedCamera === slotDefs[3].clickIndex,
-            powerIndex: slotDefs[3].powerIndex, className: "cv-stackcell" })}
+        {/* 1行目：右スタック */}
+        <div className="grid grid-rows-2 gap-3 h-full">
+          {[2, 3].map((i) => (
+            <CamTile
+              key={`rt-${i}`}
+              src={slotDefs[i].src}
+              label={slotDefs[i].src?.label || slotDefs[i].labelFallback}
+              active={selectedCamera === i + 1}
+              onClick={() => setSelectedCamera(i + 1)}
+              overlay={
+                <PowerBarOverlay
+                  sensorPower={powerData[i]?.[0] ?? 0}
+                  motorPower={powerData[i]?.[1] ?? 0}
+                />
+              }
+            />
+          ))}
         </div>
 
-        {/* 2行目：中央だけ“サブ”を配置（幅＝中央カラムと完全一致） */}
-        <div className="cv-sub">
-          {renderTile({
-            src: bottomDef.src,
-            label: bottomDef.src?.label || bottomDef.labelFallback,
-            onClick: () => setSelectedCamera(bottomDef.clickIndex),
-            active: selectedCamera === bottomDef.clickIndex,
-            powerIndex: bottomDef.powerIndex,
-            className: "cv-bottomcell"
-          })}
+        {/* 2行目：中央だけサブ（メインと同じ行高・同じ幅） */}
+        <div className="col-start-2 row-start-2 h-full">
+          <CamTile
+            src={bottomDef.src}
+            label={bottomDef.src?.label || bottomDef.labelFallback}
+            active={selectedCamera === 5}
+            onClick={() => setSelectedCamera(5)}
+            overlay={
+              <PowerBarOverlay
+                sensorPower={powerData[4]?.[0] ?? 0}
+                motorPower={powerData[4]?.[1] ?? 0}
+              />
+            }
+          />
         </div>
       </div>
     </div>
   );
 }
-
-export default CameraView;
