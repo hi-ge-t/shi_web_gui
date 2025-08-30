@@ -4,7 +4,9 @@ import PowerBarOverlay from "../components/PowerBarOverlay/PowerBarOverlay";
 import { getCameraSources } from "../lib/cameras";
 
 import SemiGauge from "../components/SemiGauge/SemiGauge";
-import GaugeModal from "../components/modals/GaugeModal";
+//import GaugeModal from "../components/modals/GaugeModal";
+import MagnetAngleModal from "../components/modals/MagnetAngleModal";
+
 
 const cameraSources = getCameraSources();
 
@@ -249,14 +251,18 @@ export default function CameraView() {
         {/* ▲▲ ここまで ▲▲ */}
 
       {/* モーダル */}
-      <GaugeModal
+      <MagnetAngleModal
         open={modal.open}
-        onClose={()=>setModal({ open:false, key:null })}
+        onClose={() => setModal({ open: false, key: null })}
         onApply={applyGauge}
-        title={`メーター設定: ${modal.key ?? ""}`}
-        {...(modal.key ? gauges[modal.key] : { currentDeg:120, targetDeg:120 })}
+        title={`モーダル：磁石角度設定（${modal.key?.includes("Top") ? "前" : "後"}）`}
+        currentDeg={(modal.key && gauges[modal.key]?.currentDeg) ?? 90}
+        targetDeg={(modal.key && gauges[modal.key]?.targetDeg) ?? 140}
         minDeg={0}
         maxDeg={180}
+        step={1}
+        // 任意：表示用の背景画像（なければ黒背景）
+        // bgImage={"/images/magnet_preview_front.png"}
       />
 
       </div>
