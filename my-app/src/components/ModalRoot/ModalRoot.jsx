@@ -3,11 +3,13 @@ import { useModal } from "../../providers/ModalProvider";
 import ErrorModal from "../modals/ErrorModal";
 import WarningModal from "../modals/WarningModal";
 import ConfirmNavigate from "../modals/ConfirmNavigate";
+import CameraPreviewModal from "../modals/CameraPreviewModal";
 
 const REGISTRY = {
   error: ErrorModal,
   warning: WarningModal,
   confirmNavigate: ConfirmNavigate,
+  cameraPreview: CameraPreviewModal,
 };
 
 export default function ModalRoot() {

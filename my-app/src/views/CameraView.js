@@ -6,6 +6,7 @@ import { getCameraSources } from "../lib/cameras";
 import SemiGauge from "../components/SemiGauge/SemiGauge";
 //import GaugeModal from "../components/modals/GaugeModal";
 import MagnetAngleModal from "../components/modals/MagnetAngleModal";
+import CameraPreviewModal from "../components/modals/CameraPreviewModal";
 
 
 const cameraSources = getCameraSources();
@@ -25,7 +26,6 @@ const METER = {
   PAD_TOP: 0,      // 列全体の上余白
   PAD_BOTTOM: 0,   // 列全体の下余白
 };
-
 
 const CamTile = ({ src, label, active, onClick, overlay }) => {
   const hasSrc = !!src?.url;
@@ -62,6 +62,7 @@ export default function CameraView() {
   const [selectedCamera, setSelectedCamera] = useState(0);
   const SLOT_COUNT = 5;
   const [powerData, setPowerData] = useState(Array(SLOT_COUNT).fill([0.5, 0.5]));
+  const [preview, setPreview] = useState({ open: false, cam: null });
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -92,6 +93,23 @@ export default function CameraView() {
   const applyGauge = (val) =>
     setGauges((g) => ({ ...g, [modal.key]: { ...g[modal.key], ...val } }));
 
+  // ★プレビュー起動ヘルパ
+  const openPreview = (camObj) => {
+    if (!camObj) return;
+    const url = camObj.src?.url || camObj.url;
+    const name = camObj.src?.label || camObj.label || "Camera Preview";
+    setPreview({
+      open: true,
+      cam: {
+        id: camObj.src?.id || camObj.id || "",
+        name,
+        url,
+        aspect: "4:3",             // 中央/下段は4:3運用なので既定値4:3（必要なら分岐）
+        fps: camObj.src?.fps,
+        resolution: camObj.src?.resolution,
+      },
+    });
+  };
 
   return (
     <div className="h-full min-h-0 flex flex-col gap-2">
@@ -114,7 +132,10 @@ export default function CameraView() {
               src={slotDefs[i].src}
               label={slotDefs[i].src?.label || slotDefs[i].labelFallback}
               active={selectedCamera === i + 1}
-              onClick={() => setSelectedCamera(i + 1)}
+              onClick={() => {
+                setSelectedCamera(i + 1);
+                openPreview(slotDefs[i]);
+              }}
               overlay={
                 <PowerBarOverlay
                   sensorPower={powerData[i]?.[0] ?? 0}
@@ -138,7 +159,12 @@ export default function CameraView() {
               src={cameraSources[selectedCamera]}
               label={cameraSources[selectedCamera]?.label || `Camera ${selectedCamera + 1}`}
               active
-              onClick={() => {}}
+              onClick={() => {                      // ★中央も拡大表示
+                openPreview({
+                  src: cameraSources[selectedCamera],
+                  label: cameraSources[selectedCamera]?.label || `Camera ${selectedCamera + 1}`,
+                });
+              }}
               overlay={null}
             />
           </div>
@@ -155,7 +181,10 @@ export default function CameraView() {
               src={slotDefs[i].src}
               label={slotDefs[i].src?.label || slotDefs[i].labelFallback}
               active={selectedCamera === i + 1}
-              onClick={() => setSelectedCamera(i + 1)}
+              onClick={() => {
+                setSelectedCamera(i + 1);
+                openPreview(slotDefs[i]);
+              }}
               overlay={
                 <PowerBarOverlay
                   sensorPower={powerData[i]?.[0] ?? 0}
@@ -179,7 +208,10 @@ export default function CameraView() {
               src={bottomDef.src}
               label={bottomDef.src?.label || bottomDef.labelFallback}
               active={selectedCamera === 5}
-              onClick={() => setSelectedCamera(5)}
+              onClick={() => {
+                setSelectedCamera(5);
+                openPreview(bottomDef)
+              }}
               overlay={
                 <PowerBarOverlay
                   sensorPower={powerData[4]?.[0] ?? 0}
@@ -264,6 +296,23 @@ export default function CameraView() {
         // 任意：表示用の背景画像（なければ黒背景）
         // bgImage={"/images/magnet_preview_front.png"}
       />
+
+      {/* ★カメラ拡大プレビュー */}
+      <CameraPreviewModal
+        open={preview.open}
+        onClose={() => setPreview({ open: false, cam: null })}
+        title={preview.cam?.name}
+        src={preview.cam?.url}
+        aspect={preview.cam?.aspect || "4:3"}
+        meta={{
+          cameraId: preview.cam?.id,
+          fps: preview.cam?.fps,
+          resolution: preview.cam?.resolution,
+          hint: "外側クリック または ESC で閉じます。",
+          disableCache: true,
+        }}
+      />
+
 
       </div>
     </div>
